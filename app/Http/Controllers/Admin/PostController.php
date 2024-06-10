@@ -5,13 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 
 use App\Models\Post;
+use App\Models\Tag;
+
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 
 // use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -21,7 +24,8 @@ class PostController extends Controller
     public function index()
     {
         //$posts = Post::all();
-        $posts = Post::paginate(3);
+        $id = Auth::id();
+        $posts = Post::where('user_id', $id)->paginate(3);
         //dd($posts);
         return view('admin.posts.index', compact('posts'));
     }
@@ -31,7 +35,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('admin.posts.create');
+        $categories = Category::all();
+        $tags = Tag::all();
+        return view('admin.posts.create', compact('categories', 'tags'));
     }
 
     /**
@@ -41,6 +47,7 @@ class PostController extends Controller
     {
         $form_data = $request->validated();
         $form_data['slug'] = Post::generateSlug($form_data['title']);
+        $form_data['user_id'] = Auth::id();
         if ($request->hasFile('image')) {
             //dd($request->image);
             $name = $request->image->getClientOriginalName(); //o il nome che volete dare al file
@@ -55,10 +62,11 @@ class PostController extends Controller
             $form_data['image'] = $path;
         }
         //dd($path);// post_images/nomefile.png
-
-
-
         $newPost = Post::create($form_data);
+        if ($request->has('tags')) {
+            $newPost->tags()->attach($request->tags);
+        }
+
         return redirect()->route('admin.posts.show', $newPost->slug);
 
     }
@@ -77,7 +85,9 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        return view('admin.posts.edit', compact('post'));
+        $categories = Category::all();
+        $tags = Tag::all();
+        return view('admin.posts.edit', compact('post', 'categories', 'tags'));
     }
 
     /**
@@ -86,6 +96,7 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request, Post $post)
     {
         $form_data = $request->all();
+        $form_data['user_id'] = Auth::id();
         if ($post->title !== $form_data['title']) {
             $form_data['slug'] = Post::generateSlug($form_data['title']);
         }
@@ -100,6 +111,11 @@ class PostController extends Controller
         }
         // DB::enableQueryLog();
         $post->update($form_data);
+        if ($request->has('tags')) {
+            $post->tags()->sync($request->tags);
+        } else {
+            $post->tags()->sync([]);
+        }
         // $query = DB::getQueryLog();
         // dd($query);
         return redirect()->route('admin.posts.show', $post->slug);
@@ -113,6 +129,7 @@ class PostController extends Controller
         if ($post->image) {
             Storage::delete($post->image);
         }
+        // $post->tags()->detach();
         $post->delete();
         return redirect()->route('admin.posts.index')->with('message', $post->title . ' è stato eliminato');
     }

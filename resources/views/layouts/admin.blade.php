@@ -8,8 +8,8 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Portfolio') }}</title>
-
+    {{-- <title>{{ config('app.name', 'Boolpress') }}</title> --}}
+    <title>@yield('title', 'Boolpress')</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -23,17 +23,11 @@
     <div id="admin">
         @include('partials.sidebar')
         <div id="wrapper">
-            @include('partials.header')
-            <main class="">
+           @include('partials.header')
+            <main class="container-fluid">
                 @yield('content')
             </main>
         </div>
-
-
-
-        <main class="">
-            @yield('content')
-        </main>
     </div>
 </body>
 

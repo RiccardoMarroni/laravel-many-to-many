@@ -48,6 +48,31 @@
                 @enderror
             </div>
             <div class="mb-3">
+                <label for="category_id" class="form-label">Select Category</label>
+                <select name="category_id" id="category_id" class="form-control @error('category_id') is-invalid @enderror">
+                    <option value="">Select Category</option>
+                  @foreach ($categories as $category)
+                      <option value="{{$category->id}}" {{ $category->id == $post->category_id ? 'selected' : '' }}>{{$category->name}}</option>
+                  @endforeach
+                </select>
+                @error('category_id')
+                <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+              </div>
+              <div class="form-group mb-3">
+                <p>Select Tag:</p>
+                @foreach ($tags as $tag)
+                    <div>
+                        <input type="checkbox" name="tags[]" value="{{ $tag->id }}" class="form-check-input"
+                            {{ $post->tags->contains($tag->id) ? 'checked' : '' }}>
+                        <label for="" class="form-check-label">{{ $tag->name }}</label>
+                    </div>
+                @endforeach
+                @error('tags')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="mb-3">
                 <button type="submit" class="btn btn-danger">Save</button>
                 <button type="reset" class="btn btn-secondary">Reset</button>
 
@@ -56,5 +81,5 @@
 
 
     </section>
-
+    @include('partials.editor');
 @endsection

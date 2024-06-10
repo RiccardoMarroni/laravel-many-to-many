@@ -4,15 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->string('image',255)->nullable()-after('title');
+            $table->unsignedBigInteger('user_id')->nullable()->default(1)->after('id');
+
+            //  $table->foreignId('user_id')
+            //        ->nullable()
+            //      ->constrained()->onDelete('set null');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 
@@ -22,7 +26,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->dropColumn('image');
+            $table->dropForeign('posts_user_id_foreign');
+            $table->dropColumn('user_id');
         });
     }
 };

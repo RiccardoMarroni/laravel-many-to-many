@@ -1,35 +1,43 @@
-@use './partials/variables' as *;
+@use  './partials/_variables.scss' as *;
 
-$fa-font-path: "../fonts/webfonts" !default;
+$fa-font-path: "../webfonts" !default;
 
-@import "~@fortawesome/fontawesome-free/scss/fontawesome";
-@import "~@fortawesome/fontawesome-free/scss/regular";
-@import "~@fortawesome/fontawesome-free/scss/solid";
-@import "~@fortawesome/fontawesome-free/scss/brands";
+@import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "~@fortawesome/fontawesome-free/scss/regular.scss";
+@import "~@fortawesome/fontawesome-free/scss/solid.scss";
+@import "~@fortawesome/fontawesome-free/scss/brands.scss";
 
-@import '~bootstrap/scss/bootstrap';
+$pagination-active-bg:grey !default;
+$pagination-color:black !default;
+$pagination-active-color:white !default;
+$pagination-active-border-color: grey !default;
+@import "~bootstrap/scss/bootstrap.scss";
+
 
 #admin{
-    height: 100vh;
-    overflow:hidden;
-    display: flex;
+   height: 100vh;
+   overflow: hidden;
+   display:flex;
+//    .btn.btn-primary{
+//     background-color: var(--bs-orange);
+//     border-color:var(--bs-orange);
+//    }
+   #sidebar{
+      background-color: $black;
+      color: $white;
+   }
 
-    
-
-    #sidebar{
-        width: 300px;
-        background-color: lightblue;
-    }
-
-    #wrapper{
-        background-color: red;
+   #wrapper{
         flex-grow: 1;
 
-         header{
 
-            min-height: 70px;
-            background-color: green;
+        header{
+            min-height:70px;
 
+            .img-profile {
+                height:2rem;
+                width:2rem;
+            }
         }
     }
 }

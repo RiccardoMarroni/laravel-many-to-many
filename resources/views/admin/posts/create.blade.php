@@ -5,7 +5,7 @@
 @section('content')
     <section>
         <h2>Create a new post</h2>
-        <form action="{{ route('admin.posts.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('admin.posts.store') }}" method="POST" enctype="multipart/form-data" novalidate>
             @csrf
             <div class="mb-3">
                 <label for="title" class="form-label">Titolo</label>
@@ -35,6 +35,31 @@
                 @enderror
             </div>
             <div class="mb-3">
+                <label for="category_id" class="form-label">Select Category</label>
+                <select name="category_id" id="category_id" class="form-control @error('category_id') is-invalid @enderror">
+                    <option value="">Select Category</option>
+                  @foreach ($categories as $category)
+                      <option value="{{$category->id}}" {{ $category->id == old('category_id') ? 'selected' : '' }}>{{$category->name}}</option>
+                  @endforeach
+                </select>
+                @error('category_id')
+                <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+              </div>
+              <div class="form-group mb-3">
+                <p>Select Tag:</p>
+                @foreach ($tags as $tag)
+                    <div>
+                        <input type="checkbox" name="tags[]" value="{{ $tag->id }}" class="form-check-input"
+                            {{ in_array($tag->id, old('tags', [])) ? 'checked' : '' }}>
+                        <label for="" class="form-check-label">{{ $tag->name }}</label>
+                    </div>
+                @endforeach
+                @error('tags')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="mb-3">
                 <button type="submit" class="btn btn-danger">Create</button>
                 <button type="reset" class="btn btn-secondary">Reset</button>
 
@@ -44,4 +69,5 @@
 
     </section>
 
+   @include('partials.editor');
 @endsection
